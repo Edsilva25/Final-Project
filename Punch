@@ -1,0 +1,57 @@
+from sense_hat import SenseHat
+import time
+sense = SenseHat()
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+counter = 1
+temp_x=0
+temp_y=0
+temp_z=0
+#loop until you identfiy the sitting still state
+while True:
+    accel_values = sense.get_accelerometer_raw()
+    temp_x = temp_x + accel_values["x"]
+    temp_y = temp_y + accel_values["y"]
+    temp_z = temp_z + accel_values["z"]
+
+    if counter == 10:
+        rest_x = temp_x/10
+        rest_y = temp_y/10
+        rest_z = temp_z/10
+        break
+
+    counter+=1
+    time.sleep(1)
+
+print(rest_x)
+print(rest_y)
+print(rest_z)
+
+while True:
+  accel_values = sense.get_accelerometer_raw()
+  temp_x = accel_values["x"]
+  temp_y = accel_values["y"]
+  temp_z = accel_values["z"]
+  temp_x = temp_x - rest_x
+  temp_y = temp_y - rest_y
+  temp_z = temp_z - rest_z
+  temp_x = abs(temp_x)
+  temp_y = abs(temp_y)
+  temp_z = abs(temp_z)
+  print (temp_x)
+  print (temp_y)
+  print (temp_z)
+
+  #determine if the senseHat has been moved
+  if temp_x>.25 or temp_z>.25 or temp_z>.25:
+    print ("test")
+    #if punch is above average then senseHat turns green else it turns red
+    if temp_x>1 or temp_z>2 or temp_z>2:
+      sense.show_message("Winner",text_colour=[0,255,0])
+      time.sleep (5)
+    else:
+      sense.show_message("Loser",text_colour=[255,0,0])
+      time.sleep (.5)
+  time.sleep (1)
+  sense.clear (blue)
